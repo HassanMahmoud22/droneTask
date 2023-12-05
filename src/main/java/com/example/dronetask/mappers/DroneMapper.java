@@ -1,7 +1,5 @@
 package com.example.dronetask.mappers;
-import com.example.dronetask.dtos.AvailableDronesDTO;
-import com.example.dronetask.dtos.DroneBatteryDTO;
-import com.example.dronetask.dtos.DroneDTO;
+import com.example.dronetask.dtos.*;
 import com.example.dronetask.models.Drone;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
@@ -16,12 +14,16 @@ import java.util.List;
 public interface DroneMapper {
     DroneMapper INSTANCE = Mappers.getMapper(DroneMapper.class);
 
-    DroneDTO droneToDroneDto(Drone drone);
+    DroneResponseDTO droneToDroneResponseDto(Drone drone);
+
 
     List<DroneDTO> dronesToDto(List<Drone> drones);
 
     @InheritInverseConfiguration
     Drone droneDtoToDrone(DroneDTO dto);
+
+    @InheritInverseConfiguration
+    Drone dronerequestDtoToDrone(DroneRequestDTO dto);
 
     DroneBatteryDTO droneToBatteryDto(Drone drone);
 

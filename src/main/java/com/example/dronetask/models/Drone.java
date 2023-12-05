@@ -1,5 +1,6 @@
 package com.example.dronetask.models;
 
+import com.example.dronetask.constants.Constant;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
@@ -27,8 +28,8 @@ public class Drone {
     private DroneModel droneModel;
 
     @Column(name="weight_limit")
-    @DecimalMax(value = "500", message =" Drone cannot carry more than 500 gr")
-    @DecimalMin(value = "1", message =" Drone must carry atleast 1 gr")
+    @Max(value = Constant.HEAVY_WEIGHT_MAX, message =" Drone cannot carry more than " + Constant.HEAVY_WEIGHT_MAX + "gr")
+    @Min(value = 1, message =" Drone must carry at least 1 gr")
     @NotNull
     private Double weightLimit;
 

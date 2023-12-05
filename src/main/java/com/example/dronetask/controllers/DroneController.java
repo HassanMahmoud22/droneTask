@@ -1,12 +1,8 @@
 package com.example.dronetask.controllers;
-import com.example.dronetask.dtos.DroneDTO;
-import com.example.dronetask.dtos.DroneBatteryDTO;
-import com.example.dronetask.dtos.AvailableDronesDTO;
-import com.example.dronetask.models.Drone;
+import com.example.dronetask.dtos.*;
 import com.example.dronetask.services.DroneService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,8 +17,8 @@ public class DroneController {
     private DroneService droneService;
 
     @PostMapping(value="/register",consumes=APPLICATION_JSON_VALUE)
-    public ResponseEntity<DroneDTO> registerDrone(@Valid @RequestBody Drone drone){
-        DroneDTO serviceDroneDTO = droneService.registerDrone(drone);
+    public ResponseEntity<DroneResponseDTO> registerDrone(@Valid @RequestBody DroneRequestDTO droneRequestDTO){
+        DroneResponseDTO serviceDroneDTO = droneService.registerDrone(droneRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(serviceDroneDTO);
     }
 
