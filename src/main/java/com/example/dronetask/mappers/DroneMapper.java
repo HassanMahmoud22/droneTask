@@ -7,23 +7,22 @@ import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
-@Mapper(componentModel="spring")
+
+@Mapper(componentModel = "spring")
 public interface DroneMapper {
     DroneMapper INSTANCE = Mappers.getMapper(DroneMapper.class);
 
-
-    @Mapping(target="weightLoaded",source="drone.currentWeight")
-    DroneDTO modelToDto(Drone drone);
+    DroneDTO droneToDroneDto(Drone drone);
 
     List<DroneDTO> dronesToDto(List<Drone> drones);
 
     @InheritInverseConfiguration
-    Drone dtoToDrone(DroneDTO dto);
+    Drone droneDtoToDrone(DroneDTO dto);
 
-    @Mapping(target="serialNumber",source="drone.serialNumber")
-    @Mapping(target="batteryCapacity",source="drone.batteryCapacity")
     DroneBatteryDTO droneToBatteryDto(Drone drone);
 
     @Mapping(target="drones",source="availableDrones")
