@@ -8,24 +8,24 @@ import com.example.dronetask.models.Drone;
 import com.example.dronetask.models.DroneModel;
 import com.example.dronetask.models.DroneState;
 import com.example.dronetask.repositories.DroneRepository;
+import com.example.dronetask.services.DroneInternalService;
 import com.example.dronetask.services.DroneService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service
 @EnableScheduling
-public class DroneServiceImpl implements DroneService {
+public class DroneServiceImpl implements DroneService, DroneInternalService {
 
     private final DroneRepository droneRepository;
     private final DroneMapper droneMapper;
     private final History history;
 
     @Autowired
-    public DroneServiceImpl(DroneRepository droneRepository , DroneMapper droneMapper , History history) {
+    public DroneServiceImpl(DroneRepository droneRepository, DroneMapper droneMapper, History history) {
         this.droneMapper = droneMapper;
         this.droneRepository = droneRepository;
         this.history = history;
@@ -93,7 +93,7 @@ public class DroneServiceImpl implements DroneService {
     @Override
     public AvailableDronesDTO listAvailableDronesForLoading() {
         List<Drone> drones = droneRepository.findByState(DroneState.LOADING);
-        return droneMapper.droneToAvailableDronesDTO(drones.size() , drones);
+        return droneMapper.droneToAvailableDronesDTO(drones.size(), drones);
     }
 
     /**
@@ -115,8 +115,8 @@ public class DroneServiceImpl implements DroneService {
     private void deliverMedication() {
         List<Drone> drones = droneRepository.findByState(DroneState.LOADED);
         for (Drone drone : drones) {
-            simulateDroneActivity(drone , DroneState.DELIVERING);
-            history.updateHistory(drone , "delivering medications");
+            simulateDroneActivity(drone, DroneState.DELIVERING);
+            history.updateHistory(drone, "delivering medications");
         }
         droneRepository.saveAll(drones);
     }
@@ -128,9 +128,9 @@ public class DroneServiceImpl implements DroneService {
     private void unloadDrone() {
         List<Drone> drones = droneRepository.findByState(DroneState.DELIVERING);
         for (Drone drone : drones) {
-            simulateDroneActivity(drone , DroneState.DELIVERED);
+            simulateDroneActivity(drone, DroneState.DELIVERED);
             drone.setWeightLoaded(0.0);
-            history.updateHistory(drone , "unloading Medications");
+            history.updateHistory(drone, "unloading Medications");
         }
         droneRepository.saveAll(drones);
     }
@@ -142,8 +142,8 @@ public class DroneServiceImpl implements DroneService {
     private void returnDrone() {
         List<Drone> drones = droneRepository.findByState(DroneState.DELIVERED);
         for (Drone drone : drones) {
-            simulateDroneActivity(drone , DroneState.RETURNING);
-            history.updateHistory(drone , "returning to the Base");
+            simulateDroneActivity(drone, DroneState.RETURNING);
+            history.updateHistory(drone, "returning to the Base");
         }
         droneRepository.saveAll(drones);
     }
@@ -156,10 +156,10 @@ public class DroneServiceImpl implements DroneService {
         List<Drone> drones = droneRepository.findByState(DroneState.RETURNING);
         for (Drone drone : drones) {
             if (drone.getBatteryCapacity() <= Constant.BATTERY_LIMIT)
-                simulateDroneActivity(drone , DroneState.IDLE);
+                simulateDroneActivity(drone, DroneState.IDLE);
             else
-                simulateDroneActivity(drone , DroneState.LOADING);
-            history.updateHistory(drone , "Landing");
+                simulateDroneActivity(drone, DroneState.LOADING);
+            history.updateHistory(drone, "Landing");
         }
         droneRepository.saveAll(drones);
     }
@@ -171,7 +171,7 @@ public class DroneServiceImpl implements DroneService {
      * @param drone      The drone which its activities will be simulated
      * @param droneState The next state of the drone after simulation
      */
-    private void simulateDroneActivity(Drone drone , DroneState droneState) {
+    private void simulateDroneActivity(Drone drone, DroneState droneState) {
         drone.setState(droneState);
         drone.setBatteryCapacity(drone.getBatteryCapacity() - generateRandom());
     }
@@ -213,7 +213,7 @@ public class DroneServiceImpl implements DroneService {
      * @param drone The Drone to be checked
      */
     public void updateDroneStateIfFilled(Drone drone) {
-        if (Double.compare(drone.getWeightLoaded() , drone.getWeightLimit()) == 0)
+        if (Double.compare(drone.getWeightLoaded(), drone.getWeightLimit()) == 0)
             drone.setState(DroneState.LOADED);
     }
 
@@ -224,7 +224,7 @@ public class DroneServiceImpl implements DroneService {
      * @param totalMedicationsWeights The total weight of medications needed to be loaded
      * @return true if there is free space, false if there is no free space
      */
-    public boolean isDroneHaveSpace(Drone drone , double totalMedicationsWeights) {
+    public boolean isDroneHaveSpace(Drone drone, double totalMedicationsWeights) {
         double availableWeight = drone.getWeightLimit() - drone.getWeightLoaded();
         return !(availableWeight < totalMedicationsWeights);
     }

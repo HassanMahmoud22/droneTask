@@ -5,6 +5,7 @@ import com.example.dronetask.mappers.MedicationMapper;
 import com.example.dronetask.models.Drone;
 import com.example.dronetask.models.Medication;
 import com.example.dronetask.repositories.MedicationRepository;
+import com.example.dronetask.services.MedicationInternalService;
 import com.example.dronetask.services.MedicationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,7 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class MedicationServiceImpl implements MedicationService {
+public class MedicationServiceImpl implements MedicationService, MedicationInternalService {
     private final MedicationRepository medicationRepository;
     private final MedicationMapper medicationMapper;
 
@@ -40,17 +41,6 @@ public class MedicationServiceImpl implements MedicationService {
      */
     public List<Medication> mapMedicationDTOsToMedications(List<MedicationDTO> medicationsDTOS) {
         return medicationMapper.medicationsDtosToMedications(medicationsDTOS);
-    }
-
-    /**
-     * lists all medications which were loaded by drone id
-     *
-     * @param drone The Drone which its medications will be listed
-     * @return List of all Medications were loaded by given Drone
-     */
-    @Override
-    public List<Medication> listMedications(Drone drone) {
-        return medicationRepository.findByDroneId(drone);
     }
 
     /**

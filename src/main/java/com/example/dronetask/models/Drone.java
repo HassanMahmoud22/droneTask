@@ -22,7 +22,7 @@ public class Drone {
     @NotEmpty
     @NotBlank
     private String serialNumber;
-//not one of the values accepted for Enum class: [Middleweight, Lightweight, Heavyweight, Cruiserweight]]
+    //not one of the values accepted for Enum class: [Middleweight, Lightweight, Heavyweight, Cruiserweight]]
     @Column(name="model")
     @Enumerated(value = EnumType.STRING)
     @JsonProperty(required = true)
