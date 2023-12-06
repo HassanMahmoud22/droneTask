@@ -1,15 +1,13 @@
 package com.example.dronetask.dtos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.Column;
-import jakarta.persistence.Id;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
 @Data
 public class DroneRequestDTO {
 
-    @NotNull(message = "serial number must not be empty")
+    @NotNull(message = "{validation.serialNumber.notEmpty}")
     @Size(min=5,max=100,message="Drone serial number must not be greater than 100 characters")
     @JsonProperty(required = true)
     @NotEmpty

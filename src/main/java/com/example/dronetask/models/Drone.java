@@ -7,6 +7,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
+import java.util.List;
+
 @Entity
 @Table(name ="drones")
 @Data
@@ -48,4 +50,8 @@ public class Drone {
     @Column(name = "weight_loaded")
     @JsonIgnore
     private Double weightLoaded;
+
+    @JsonIgnore
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "droneId", cascade = CascadeType.ALL)
+    private List<Medication> medications;
 }

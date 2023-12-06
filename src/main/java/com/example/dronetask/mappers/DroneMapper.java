@@ -5,8 +5,6 @@ import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
-import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 
@@ -17,10 +15,10 @@ public interface DroneMapper {
     DroneResponseDTO droneToDroneResponseDto(Drone drone);
 
 
-    List<DroneDTO> dronesToDto(List<Drone> drones);
+   // List<DroneResponseDTO> dronesToDto(List<Drone> drones);
 
-    @InheritInverseConfiguration
-    Drone droneDtoToDrone(DroneDTO dto);
+   /* @InheritInverseConfiguration
+    Drone droneDtoToDrone(DroneResponseDTO dto);*/
 
     @InheritInverseConfiguration
     Drone dronerequestDtoToDrone(DroneRequestDTO dto);

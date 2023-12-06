@@ -5,5 +5,5 @@ import lombok.Data;
 import java.util.List;
 @Data
 public class AvailableDronesDTO {
-    private List<DroneDTO> drones;
+    private List<DroneResponseDTO> drones;
 }

@@ -6,6 +6,6 @@ import org.springframework.stereotype.Service;
 @Service
 public interface DroneService {
     public DroneResponseDTO registerDrone(DroneRequestDTO droneRequestDTO);
-    public AvailableDronesDTO listAvailableDrones();
-    public DroneBatteryDTO checkBattery(String serialNumber);
+    public AvailableDronesDTO listAvailableDronesForLoading();
+    public DroneBatteryDTO getBatteryCapacity(String serialNumber);
 }

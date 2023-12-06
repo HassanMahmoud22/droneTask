@@ -6,9 +6,6 @@ import lombok.Data;
 @Data
 public class MedicationDTO {
 
-    @JsonProperty(required = false)
-    private Long id;
-
     @JsonProperty(required = true)
     @NotEmpty(message = "name can't be empty")
     @NotBlank(message = "name can't be blank")

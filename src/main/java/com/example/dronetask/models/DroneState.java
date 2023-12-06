@@ -7,6 +7,4 @@ public enum DroneState {
     DELIVERING,
     DELIVERED,
     RETURNING
-
-
 }

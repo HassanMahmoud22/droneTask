@@ -13,12 +13,14 @@ public interface MedicationMapper {
 
     MedicationMapper INSTANCE = Mappers.getMapper(MedicationMapper.class);
 
-    MedicationDTO medicationToDTOo(Medication medication);
+    MedicationDTO medicationToDTO(Medication medication);
 
     @InheritInverseConfiguration
     Medication dtoToMedication(MedicationDTO dto);
 
     @InheritInverseConfiguration
     List<Medication> dtosToMedications(List<MedicationDTO> dtos);
+
+    List<MedicationDTO> medicationsToDTOs(List<Medication> dtos);
 
 }
