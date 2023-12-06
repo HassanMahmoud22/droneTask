@@ -5,6 +5,20 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface DroneMedicationService {
-    public ResponseEntity<?> loadDrone(LoadDroneDTO drontActivityDto);
-    public LoadDroneDTO getDroneMedications(String serialnumber);
+
+    /**
+     * loads Medications to Drone
+     *
+     * @param loadDroneDTO This DTO is serial number of Drone and List of Medications to be loaded
+     * @return             ResponseEntity with http status and Message or Object in body
+     */
+    public ResponseEntity<?> loadDrone(LoadDroneDTO loadDroneDTO);
+
+    /**
+     * Gets the Medications List which were loaded by given Drone
+     *
+     * @param serialnumber  The Serial Number of the Drone
+     * @return              loadDroneDTO which have The List of Medications which loaded and the serial number of the Drone
+     */
+    public ResponseEntity<?> getDroneMedications(String serialnumber);
 }

@@ -27,7 +27,6 @@ public class DroneMedicationController {
 
     @GetMapping(value="/getMedications/{serialNumber}")
     public ResponseEntity<?> getMedications(@PathVariable("serialNumber")String serialNumber){
-        LoadDroneDTO loadDroneDTO = droneMedicationService.getDroneMedications(serialNumber);
-        return ResponseEntity.status(HttpStatus.OK).body(loadDroneDTO);
+        return droneMedicationService.getDroneMedications(serialNumber);
     }
 }

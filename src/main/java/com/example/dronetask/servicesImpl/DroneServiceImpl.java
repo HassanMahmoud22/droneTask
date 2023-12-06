@@ -22,10 +22,10 @@ public class DroneServiceImpl implements DroneService {
 
     private final DroneRepository droneRepository;
     private final DroneMapper droneMapper;
-    private History history;
+    private final History history;
 
     @Autowired
-    public DroneServiceImpl ( DroneRepository droneRepository , DroneMapper droneMapper , History history ) {
+    public DroneServiceImpl(DroneRepository droneRepository , DroneMapper droneMapper , History history) {
         this.droneMapper = droneMapper;
         this.droneRepository = droneRepository;
         this.history = history;
@@ -38,15 +38,16 @@ public class DroneServiceImpl implements DroneService {
      * @return the response data of the drone
      */
     @Override
-    public DroneResponseDTO registerDrone ( DroneRequestDTO droneRequestDTO ) {
-        Drone drone = droneMapper.dronerequestDtoToDrone ( droneRequestDTO );
-        drone.setDroneModel ( classifyDroneModel ( drone.getWeightLimit ( ) ) );
-        drone.setState ( classifyDroneState ( drone.getBatteryCapacity ( ) ) );
-        drone.setWeightLoaded ( 0.0 );
+    public DroneResponseDTO registerDrone(DroneRequestDTO droneRequestDTO) {
+        Drone drone = droneMapper.dronerequestDtoToDrone(droneRequestDTO);
+        drone.setDroneModel(classifyDroneModel(drone.getWeightLimit()));
+        drone.setState(classifyDroneState(drone.getBatteryCapacity()));
+        drone.setWeightLoaded(0.0);
         //save this drone to database and return droneResponseDTO
-        Drone repositoryDrone = droneRepository.save ( drone );
-        return droneMapper.droneToDroneResponseDto ( repositoryDrone );
+        Drone repositoryDrone = droneRepository.save(drone);
+        return droneMapper.droneToDroneResponseDto(repositoryDrone);
     }
+
 
     /**
      * Classifies Drone Model depending on weight limit of the Drone
@@ -54,15 +55,15 @@ public class DroneServiceImpl implements DroneService {
      * @param weightLimit the maximum weight drone can load to classify drone model depending on it
      * @return The DroneModel after being classified
      */
-    private DroneModel classifyDroneModel ( double weightLimit ) {
+    private DroneModel classifyDroneModel(double weightLimit) {
         // check if weightLimit is smaller than or equal specified maximum weight that lightweight Drones can hold
-        if ( weightLimit <= Constant.LIGHT_WEIGHT_MAX ) {
+        if (weightLimit <= Constant.LIGHT_WEIGHT_MAX) {
             return DroneModel.Lightweight;
             // check if weightLimit is smaller than or equal specified middle weight that middleweight Drones can hold
-        } else if ( weightLimit <= Constant.MIDDLE_WEIGHT_MAX ) {
+        } else if (weightLimit <= Constant.MIDDLE_WEIGHT_MAX) {
             return DroneModel.Middleweight;
             // check if weightLimit is smaller than or equal specified cruiser weight that cruiserweight Drones can hold
-        } else if ( weightLimit <= Constant.CRUISER_WEIGHT_MAX ) {
+        } else if (weightLimit <= Constant.CRUISER_WEIGHT_MAX) {
             return DroneModel.Cruiserweight;
         } else {
             return DroneModel.Heavyweight;
@@ -75,9 +76,9 @@ public class DroneServiceImpl implements DroneService {
      * @param batteryCapacity the battery capacity of drone to classify drone state based on it
      * @return the state of the drone after classification
      */
-    private DroneState classifyDroneState ( int batteryCapacity ) {
+    private DroneState classifyDroneState(int batteryCapacity) {
         //if battery capacity > specified battery limit (25%)
-        if ( batteryCapacity > Constant.BATTERY_LIMIT ) {
+        if (batteryCapacity > Constant.BATTERY_LIMIT) {
             return DroneState.LOADING;
         } else {
             return DroneState.IDLE;
@@ -90,9 +91,9 @@ public class DroneServiceImpl implements DroneService {
      * @return all drones in loading state
      */
     @Override
-    public AvailableDronesDTO listAvailableDronesForLoading ( ) {
-        List < Drone > drones = droneRepository.findByState ( DroneState.LOADING );
-        return droneMapper.droneToAvailableDronesDTO ( drones.size ( ) , drones );
+    public AvailableDronesDTO listAvailableDronesForLoading() {
+        List<Drone> drones = droneRepository.findByState(DroneState.LOADING);
+        return droneMapper.droneToAvailableDronesDTO(drones.size() , drones);
     }
 
     /**
@@ -102,74 +103,77 @@ public class DroneServiceImpl implements DroneService {
      * @return the serial number and battery capacity of the drone
      */
     @Override
-    public DroneBatteryDTO getBatteryCapacity ( String serialNumber ) {
-        Drone drone = droneRepository.findBySerialNumber ( serialNumber );
-        return droneMapper.droneToBatteryDto ( drone );
+    public DroneBatteryDTO getBatteryCapacity(String serialNumber) {
+        Drone drone = droneRepository.findBySerialNumber(serialNumber);
+        return droneMapper.droneToBatteryDto(drone);
     }
 
     /**
      * This is a simulation of delivering the Medications
      */
-    @Scheduled ( fixedRate = 3000 )
-    private void deliverMedication ( ) {
-        List < Drone > drones = droneRepository.findByState ( DroneState.LOADED );
-        for ( Drone drone : drones ) {
-            simulateDroneActivity ( drone , DroneState.DELIVERING );
-            history.updateHistory ( drone , "delivering medications" );
+    @Scheduled (fixedRate = 3000)
+    private void deliverMedication() {
+        List<Drone> drones = droneRepository.findByState(DroneState.LOADED);
+        for (Drone drone : drones) {
+            simulateDroneActivity(drone , DroneState.DELIVERING);
+            history.updateHistory(drone , "delivering medications");
         }
-        droneRepository.saveAll ( drones );
+        droneRepository.saveAll(drones);
     }
 
     /**
      * This is a simulation of unloading the Medications
      */
-    @Scheduled ( fixedRate = 6000 )
-    private void unloadDrone ( ) {
-        List < Drone > drones = droneRepository.findByState ( DroneState.DELIVERING );
-        for ( Drone drone : drones ) {
-            simulateDroneActivity ( drone , DroneState.DELIVERED );
-            drone.setWeightLoaded ( 0.0 );
-            history.updateHistory ( drone , "unloading Medications" );
+    @Scheduled (fixedRate = 6000)
+    private void unloadDrone() {
+        List<Drone> drones = droneRepository.findByState(DroneState.DELIVERING);
+        for (Drone drone : drones) {
+            simulateDroneActivity(drone , DroneState.DELIVERED);
+            drone.setWeightLoaded(0.0);
+            history.updateHistory(drone , "unloading Medications");
         }
-        droneRepository.saveAll ( drones );
+        droneRepository.saveAll(drones);
     }
 
     /**
      * This is a simulation of returning drone to the Base the Medications
      */
-    @Scheduled ( fixedRate = 8000 )
-    private void returnDrone ( ) {
-        List < Drone > drones = droneRepository.findByState ( DroneState.DELIVERED );
-        for ( Drone drone : drones ) {
-            simulateDroneActivity ( drone , DroneState.RETURNING );
-            history.updateHistory ( drone , "returning to the Base" );
+    @Scheduled (fixedRate = 8000)
+    private void returnDrone() {
+        List<Drone> drones = droneRepository.findByState(DroneState.DELIVERED);
+        for (Drone drone : drones) {
+            simulateDroneActivity(drone , DroneState.RETURNING);
+            history.updateHistory(drone , "returning to the Base");
         }
-        droneRepository.saveAll ( drones );
+        droneRepository.saveAll(drones);
     }
 
     /**
      * This is a simulation of Landing the Drone on the Base
      */
-    @Scheduled ( fixedRate = 10000 )
-    private void landDrone ( ) {
-        List < Drone > drones = droneRepository.findByState ( DroneState.RETURNING );
-        for ( Drone drone : drones ) {
-            if ( drone.getBatteryCapacity ( ) <= Constant.BATTERY_LIMIT )
-                simulateDroneActivity ( drone , DroneState.IDLE );
+    @Scheduled (fixedRate = 10000)
+    private void landDrone() {
+        List<Drone> drones = droneRepository.findByState(DroneState.RETURNING);
+        for (Drone drone : drones) {
+            if (drone.getBatteryCapacity() <= Constant.BATTERY_LIMIT)
+                simulateDroneActivity(drone , DroneState.IDLE);
             else
-                simulateDroneActivity ( drone , DroneState.LOADING );
-            history.updateHistory ( drone , "Landing" );
+                simulateDroneActivity(drone , DroneState.LOADING);
+            history.updateHistory(drone , "Landing");
         }
-        droneRepository.saveAll ( drones );
+        droneRepository.saveAll(drones);
     }
 
     /**
+     * Simulates Drone Activity by decreasing current Battery Capacity
+     * and sets its state to next state
+     *
      * @param drone      The drone which its activities will be simulated
      * @param droneState The next state of the drone after simulation
      */
-    private void simulateDroneActivity ( Drone drone , DroneState droneState ) {
-        drone.setState ( droneState );
-        drone.setBatteryCapacity ( drone.getBatteryCapacity ( ) - generateRandom ( ) );
+    private void simulateDroneActivity(Drone drone , DroneState droneState) {
+        drone.setState(droneState);
+        drone.setBatteryCapacity(drone.getBatteryCapacity() - generateRandom());
     }
 
     /**
@@ -178,9 +182,60 @@ public class DroneServiceImpl implements DroneService {
      *
      * @return random number from 1 to 5
      */
-    private int generateRandom ( ) {
+    private int generateRandom() {
         int min = 1;
         int max = 5;
-        return ( int ) Math.floor ( Math.random ( ) * ( max - min + 1 ) + min );
+        return (int) Math.floor(Math.random() * (max - min + 1) + min);
+    }
+
+    /**
+     * Gets Drone by given serial number
+     *
+     * @param serialNumber The serial number of the Drone
+     * @return The Drone needed if exists otherwise null
+     */
+    public Drone getDroneBySerialNumber(String serialNumber) {
+        return droneRepository.findBySerialNumber(serialNumber);
+    }
+
+    /**
+     * updates Drone in Database
+     *
+     * @param drone The Drone to be updated
+     */
+    public void updateDrone(Drone drone) {
+        droneRepository.save(drone);
+    }
+
+    /**
+     * check if the Drone doesn't have any free space then change its state to loaded
+     *
+     * @param drone The Drone to be checked
+     */
+    public void updateDroneStateIfFilled(Drone drone) {
+        if (Double.compare(drone.getWeightLoaded() , drone.getWeightLimit()) == 0)
+            drone.setState(DroneState.LOADED);
+    }
+
+    /**
+     * checks if drone has enough free space to can load medications weights
+     *
+     * @param drone                   The drone which its free space checked
+     * @param totalMedicationsWeights The total weight of medications needed to be loaded
+     * @return true if there is free space, false if there is no free space
+     */
+    public boolean isDroneHaveSpace(Drone drone , double totalMedicationsWeights) {
+        double availableWeight = drone.getWeightLimit() - drone.getWeightLoaded();
+        return !(availableWeight < totalMedicationsWeights);
+    }
+
+    /**
+     * checks if drone exists and in loading state
+     *
+     * @param drone The drone which its state being checked
+     * @return true if it's not null and its state is loading, otherwise return false
+     */
+    public boolean isDroneSuitable(Drone drone) {
+        return drone != null && drone.getState() == DroneState.LOADING;
     }
 }

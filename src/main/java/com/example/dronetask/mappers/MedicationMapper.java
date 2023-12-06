@@ -19,7 +19,7 @@ public interface MedicationMapper {
     Medication dtoToMedication(MedicationDTO dto);
 
     @InheritInverseConfiguration
-    List<Medication> dtosToMedications(List<MedicationDTO> dtos);
+    List<Medication> medicationsDtosToMedications(List<MedicationDTO> dtos);
 
     List<MedicationDTO> medicationsToDTOs(List<Medication> dtos);
 
