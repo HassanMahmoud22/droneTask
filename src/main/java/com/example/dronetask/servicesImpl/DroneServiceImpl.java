@@ -2,6 +2,7 @@ package com.example.dronetask.servicesImpl;
 
 import com.example.dronetask.constants.Constant;
 import com.example.dronetask.dtos.*;
+import com.example.dronetask.history.History;
 import com.example.dronetask.mappers.DroneMapper;
 import com.example.dronetask.models.Drone;
 import com.example.dronetask.models.DroneModel;
@@ -23,12 +24,13 @@ public class DroneServiceImpl implements DroneService {
 
     private final DroneRepository droneRepository;
     private final DroneMapper droneMapper;
-    static final Logger logger = Logger.getLogger(DroneServiceImpl.class.getName());
+    private History history;
 
     @Autowired
-    public DroneServiceImpl(DroneRepository droneRepository, DroneMapper droneMapper) {
+    public DroneServiceImpl(DroneRepository droneRepository, DroneMapper droneMapper, History history) {
         this.droneMapper = droneMapper;
         this.droneRepository = droneRepository;
+        this.history = history;
     }
     /*
         Param :
@@ -118,7 +120,7 @@ public class DroneServiceImpl implements DroneService {
         List<Drone> drones = droneRepository.findByState(DroneState.LOADED);
         for(Drone drone : drones) {
             simulateDroneActivity(drone, DroneState.DELIVERING);
-            updateLogger(drone, "delivering medications");
+            history.updateHistory(drone, "delivering medications");
         }
         droneRepository.saveAll(drones);
     }
@@ -134,7 +136,7 @@ public class DroneServiceImpl implements DroneService {
         for(Drone drone : drones) {
             simulateDroneActivity(drone, DroneState.DELIVERED);
             drone.setWeightLoaded(0.0);
-            updateLogger(drone, "Emptying Medications");
+            history.updateHistory(drone, "Emptying Medications");
         }
         droneRepository.saveAll(drones);
     }
@@ -149,7 +151,7 @@ public class DroneServiceImpl implements DroneService {
         List<Drone> drones = droneRepository.findByState(DroneState.DELIVERED);
         for(Drone drone : drones) {
             simulateDroneActivity(drone, DroneState.RETURNING);
-            updateLogger(drone, "returning to base");
+            history.updateHistory(drone, "returning to base");
         }
         droneRepository.saveAll(drones);
     }
@@ -170,7 +172,7 @@ public class DroneServiceImpl implements DroneService {
                 simulateDroneActivity(drone, DroneState.IDLE);
             else
                 simulateDroneActivity(drone, DroneState.LOADING);
-            updateLogger(drone, "Landing");
+            history.updateHistory(drone, "Landing");
         }
         droneRepository.saveAll(drones);
     }
@@ -187,24 +189,7 @@ public class DroneServiceImpl implements DroneService {
         drone.setBatteryCapacity(drone.getBatteryCapacity() - generateRandom());
         return drone;
     }
-
-    /*
-       Param :
-            Drone which will be simulated, DroneState which is the next state of the drone after simulation
-       Description :
-            simulateDroneActivity simulate the drone activity by changing its current state to next state
-            and decrease its battery capacity to simulate it as it's consumed
-    */
-    private void updateLogger(Drone drone, String message) {
-        logger.info("Drone capacity check at "+ formatEventDate());
-        logger.info("drone with serial number " + drone.getSerialNumber() + " has " + drone.getBatteryCapacity() + " battery capacity due to " + message);
-    }
-
-    private  String formatEventDate(){
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-        return formatter.format(LocalDateTime.now());
-    }
-    public int generateRandom() {
+    private int generateRandom() {
         int min = 1;
         int max = 5;
         return (int)Math.floor(Math.random() * (max - min + 1) + min);

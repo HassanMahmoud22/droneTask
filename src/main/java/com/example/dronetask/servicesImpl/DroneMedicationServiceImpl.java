@@ -2,6 +2,7 @@ package com.example.dronetask.servicesImpl;
 
 import com.example.dronetask.dtos.LoadDroneDTO;
 import com.example.dronetask.dtos.MedicationDTO;
+import com.example.dronetask.history.History;
 import com.example.dronetask.models.Drone;
 import com.example.dronetask.models.DroneState;
 import com.example.dronetask.models.Medication;
@@ -18,13 +19,12 @@ import java.util.List;
 @Service
 public class DroneMedicationServiceImpl implements DroneMedicationService {
 
-    @Autowired
     private DroneRepository droneRepository;
-
     private MedicationService medicationService;
 
     @Autowired
-    public DroneMedicationServiceImpl(MedicationService medicationService) {
+    public DroneMedicationServiceImpl(DroneRepository droneRepository, MedicationService medicationService) {
+        this.droneRepository = droneRepository;
         this.medicationService = medicationService;
     }
 
