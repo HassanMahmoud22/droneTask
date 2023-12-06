@@ -1,14 +1,15 @@
 package com.example.dronetask.servicesImpl;
 
+import com.example.dronetask.constants.Message;
 import com.example.dronetask.dtos.LoadDroneDTO;
 import com.example.dronetask.dtos.MedicationDTO;
+import com.example.dronetask.exceptionHandler.WeightLimitExceeded;
 import com.example.dronetask.models.Drone;
+import com.example.dronetask.models.DroneState;
 import com.example.dronetask.models.Medication;
 import com.example.dronetask.services.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,22 +32,18 @@ public class DroneMedicationServiceImpl implements DroneMedicationService {
      * loads Medications to Drone
      *
      * @param loadDroneDTO This DTO is serial number of Drone and List of Medications to be loaded
-     * @return ResponseEntity with http status and Message or Object in body
+     * @return             List of MedicationDTO
      */
     @Transactional
     @Override
-    public ResponseEntity<?> loadDrone(LoadDroneDTO loadDroneDTO) {
-        //retreiving drone from Database with given serial number
-        Drone drone = droneInternalService.getDroneBySerialNumber(loadDroneDTO.getSerialNumber());
-        //if drone isn't suitable for loading
-        if (!droneInternalService.isDroneSuitable(drone)) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("There is no Drone with this serial number in loading state");
-        }
+    public List<MedicationDTO> loadDrone(LoadDroneDTO loadDroneDTO) {
+        //retreiving drone from Database with given serial number and in loading state
+        Drone drone = droneInternalService.getDroneBySerialNumberAndState(loadDroneDTO.getSerialNumber(), DroneState.LOADING);
         List<Medication> medications = medicationInternalService.mapMedicationDTOsToMedications(loadDroneDTO.getMedications());
         double totalMedicationsWeight = medicationInternalService.calculateTotalWeightOfMedications(medications);
         //if Drone doesn't have enough space to load medications
         if (!droneInternalService.isDroneHaveSpace(drone, totalMedicationsWeight)) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("The Medication Weight exceeds the available weight in this drone");
+            throw new WeightLimitExceeded(Message.WEIGHT_LIMIT_EXCEEDED);
         } else {
             //load the medications
             return loadMedicationsToDrone(medications, drone, totalMedicationsWeight);
@@ -59,9 +56,9 @@ public class DroneMedicationServiceImpl implements DroneMedicationService {
      * @param medications            The Medications list
      * @param drone                  The Drone to be loaded
      * @param totalMedicationsWeight the total weight of the Medications
-     * @return
+     * @return                       return list of all Medications loaded in This Drone
      */
-    private ResponseEntity<?> loadMedicationsToDrone(List<Medication> medications, Drone drone, double totalMedicationsWeight) {
+    private List<MedicationDTO> loadMedicationsToDrone(List<Medication> medications, Drone drone, double totalMedicationsWeight) {
         medicationService.registerMedications(medications);
         double droneNewWeight = drone.getWeightLoaded() + totalMedicationsWeight;
         drone.setWeightLoaded(droneNewWeight);
@@ -69,7 +66,7 @@ public class DroneMedicationServiceImpl implements DroneMedicationService {
         setDroneToMedications(medications, drone);
         drone.setMedications(medications);
         droneInternalService.updateDrone(drone);
-        return ResponseEntity.status(HttpStatus.OK).body("The Medications are loaded to the drone Successfully!!");
+        return medicationService.listMedicationsDTO(drone);
     }
 
     /**
@@ -89,18 +86,13 @@ public class DroneMedicationServiceImpl implements DroneMedicationService {
      * @return loadDroneDTO which have The List of Medications which loaded and the serial number of the Drone
      */
     @Override
-    public ResponseEntity<?> getDroneMedications(String serialnumber) {
+    public LoadDroneDTO getDroneMedications(String serialnumber) {
         Drone drone = droneInternalService.getDroneBySerialNumber(serialnumber);
-        //if drone exists
-        if (drone != null) {
-            //sets loadDroneDTO values by given serial number and medicationDTOS list
-            LoadDroneDTO loadDroneDTO = new LoadDroneDTO();
-            loadDroneDTO.setSerialNumber(serialnumber);
-            List<MedicationDTO> medicationDTOS = medicationService.listMedicationsDTO(drone);
-            loadDroneDTO.setMedications(medicationDTOS);
-            return ResponseEntity.status(HttpStatus.OK).body(loadDroneDTO);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Drone with this serial number not found");
-        }
+        //sets loadDroneDTO values by given serial number and medicationDTOS list
+        LoadDroneDTO loadDroneDTO = new LoadDroneDTO();
+        loadDroneDTO.setSerialNumber(serialnumber);
+        List<MedicationDTO> medicationDTOS = medicationService.listMedicationsDTO(drone);
+        loadDroneDTO.setMedications(medicationDTOS);
+        return loadDroneDTO;
     }
 }

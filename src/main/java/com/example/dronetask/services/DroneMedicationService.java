@@ -1,7 +1,10 @@
 package com.example.dronetask.services;
 import com.example.dronetask.dtos.LoadDroneDTO;
+import com.example.dronetask.dtos.MedicationDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public interface DroneMedicationService {
@@ -12,7 +15,7 @@ public interface DroneMedicationService {
      * @param loadDroneDTO This DTO is serial number of Drone and List of Medications to be loaded
      * @return             ResponseEntity with http status and Message or Object in body
      */
-    public ResponseEntity<?> loadDrone(LoadDroneDTO loadDroneDTO);
+    public List<MedicationDTO> loadDrone(LoadDroneDTO loadDroneDTO);
 
     /**
      * Gets the Medications List which were loaded by given Drone
@@ -20,5 +23,5 @@ public interface DroneMedicationService {
      * @param serialnumber  The Serial Number of the Drone
      * @return              loadDroneDTO which have The List of Medications which loaded and the serial number of the Drone
      */
-    public ResponseEntity<?> getDroneMedications(String serialnumber);
+    public LoadDroneDTO getDroneMedications(String serialnumber);
 }

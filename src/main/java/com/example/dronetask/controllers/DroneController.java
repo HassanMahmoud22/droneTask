@@ -16,21 +16,17 @@ public class DroneController {
     @Autowired
     private DroneService droneService;
 
-    @PostMapping(value="/register",consumes=APPLICATION_JSON_VALUE)
+    @PostMapping(value="/registerDrone",consumes=APPLICATION_JSON_VALUE)
     public ResponseEntity<?> registerDrone(@Valid @RequestBody DroneRequestDTO droneRequestDTO){
-        DroneResponseDTO serviceDroneDTO = droneService.registerDrone(droneRequestDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(serviceDroneDTO);
+        DroneResponseDTO droneResponseDTO = droneService.registerDrone(droneRequestDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(droneResponseDTO);
     }
 
-    @GetMapping(path = "/{serialNumber}")
+    @GetMapping(path = "/batteryCapacity/{serialNumber}")
     public ResponseEntity<?> getDroneBattery(@PathVariable("serialNumber")String serialNumber){
-        DroneBatteryDTO dto = droneService.getBatteryCapacity(serialNumber);
-        if(dto != null) {
-            return ResponseEntity.status(HttpStatus.OK).body(dto);
-        }
-        else
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("There is no drone with this id");
+        return ResponseEntity.status(HttpStatus.OK).body(droneService.getBatteryCapacity(serialNumber));
     }
+
     @GetMapping("/available")
     public ResponseEntity<AvailableDronesDTO> findAvailableDrones(){
         return ResponseEntity.status(HttpStatus.OK).body(droneService.listAvailableDronesForLoading());

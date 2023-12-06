@@ -17,7 +17,7 @@ public class Drone {
     @Id
     @Column(name="serial_number", length = 100)
     @NotNull(message = "serial number must not be empty")
-    @Size(min=5,max=100,message="Drone serial number must not be greater than 100 characters")
+    @Size(min=5,max=100,message="Drone serial number must be between 5 and 100 characters")
     @JsonProperty(required = true)
     @NotEmpty
     @NotBlank
@@ -48,7 +48,6 @@ public class Drone {
     private DroneState state;
 
     @Column(name = "weight_loaded")
-    @JsonIgnore
     private Double weightLoaded;
 
     @JsonIgnore

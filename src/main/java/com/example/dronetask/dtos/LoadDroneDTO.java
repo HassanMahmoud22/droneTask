@@ -12,7 +12,7 @@ import java.util.List;
 @Data
 public class LoadDroneDTO {
     @NotNull(message = "Drone serial number can't be null")
-    @Size(min=3,max=100,message="Drone serial number must not be greater than {value} characters")
+    @Size(min=3,max=100,message="Drone serial number must be between 5 and 100 characters")
     @JsonProperty(required = true)
     @NotEmpty
     @NotBlank

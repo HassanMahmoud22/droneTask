@@ -15,18 +15,11 @@ public class DroneMedicationController {
     private DroneMedicationService droneMedicationService;
     @PostMapping(value="/load")
     public ResponseEntity<?> loadDrone(@Valid @RequestBody LoadDroneDTO dto){
-       /* ResponseEntity responseEntity = droneMedicationService.loadDrone(dto);
-        if(responseEntity.getStatusCode() == HttpStatus.OK) {
-            //check if it is full deliver it
-
-        }
-        return responseEntity;*/
-
-        return droneMedicationService.loadDrone(dto);
+        return ResponseEntity.status(HttpStatus.OK).body(droneMedicationService.loadDrone(dto));
     }
 
     @GetMapping(value="/getMedications/{serialNumber}")
     public ResponseEntity<?> getMedications(@PathVariable("serialNumber")String serialNumber){
-        return droneMedicationService.getDroneMedications(serialNumber);
+        return ResponseEntity.status(HttpStatus.OK).body(droneMedicationService.getDroneMedications(serialNumber));
     }
 }

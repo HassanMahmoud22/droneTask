@@ -1,6 +1,7 @@
 package com.example.dronetask.services;
 
 import com.example.dronetask.models.Drone;
+import com.example.dronetask.models.DroneState;
 
 public interface DroneInternalService {
     /**
@@ -10,6 +11,8 @@ public interface DroneInternalService {
      * @return The Drone needed if exists otherwise null
      */
     public Drone getDroneBySerialNumber(String serialNumber);
+
+    public Drone getDroneBySerialNumberAndState(String serialNumber, DroneState state);
 
     /**
      * updates Drone in Database
@@ -34,11 +37,4 @@ public interface DroneInternalService {
      */
     public boolean isDroneHaveSpace(Drone drone , double totalMedicationsWeights);
 
-    /**
-     * checks if drone exists and in loading state
-     *
-     * @param drone The drone which its state being checked
-     * @return true if it's not null and its state is loading, otherwise return false
-     */
-    public boolean isDroneSuitable(Drone drone);
 }

@@ -1,7 +1,9 @@
 package com.example.dronetask.servicesImpl;
 
 import com.example.dronetask.constants.Constant;
+import com.example.dronetask.constants.Message;
 import com.example.dronetask.dtos.*;
+import com.example.dronetask.exceptionHandler.DroneNotFoundException;
 import com.example.dronetask.history.History;
 import com.example.dronetask.mappers.DroneMapper;
 import com.example.dronetask.models.Drone;
@@ -47,7 +49,6 @@ public class DroneServiceImpl implements DroneService, DroneInternalService {
         Drone repositoryDrone = droneRepository.save(drone);
         return droneMapper.droneToDroneResponseDto(repositoryDrone);
     }
-
 
     /**
      * Classifies Drone Model depending on weight limit of the Drone
@@ -104,7 +105,7 @@ public class DroneServiceImpl implements DroneService, DroneInternalService {
      */
     @Override
     public DroneBatteryDTO getBatteryCapacity(String serialNumber) {
-        Drone drone = droneRepository.findBySerialNumber(serialNumber);
+        Drone drone = getDroneBySerialNumber(serialNumber);
         return droneMapper.droneToBatteryDto(drone);
     }
 
@@ -116,7 +117,7 @@ public class DroneServiceImpl implements DroneService, DroneInternalService {
         List<Drone> drones = droneRepository.findByState(DroneState.LOADED);
         for (Drone drone : drones) {
             simulateDroneActivity(drone, DroneState.DELIVERING);
-            history.updateHistory(drone, "delivering medications");
+            history.updateHistory(drone, Message.DELIVERING);
         }
         droneRepository.saveAll(drones);
     }
@@ -130,7 +131,7 @@ public class DroneServiceImpl implements DroneService, DroneInternalService {
         for (Drone drone : drones) {
             simulateDroneActivity(drone, DroneState.DELIVERED);
             drone.setWeightLoaded(0.0);
-            history.updateHistory(drone, "unloading Medications");
+            history.updateHistory(drone, Message.UNLOADING);
         }
         droneRepository.saveAll(drones);
     }
@@ -143,7 +144,7 @@ public class DroneServiceImpl implements DroneService, DroneInternalService {
         List<Drone> drones = droneRepository.findByState(DroneState.DELIVERED);
         for (Drone drone : drones) {
             simulateDroneActivity(drone, DroneState.RETURNING);
-            history.updateHistory(drone, "returning to the Base");
+            history.updateHistory(drone, Message.RETURNING);
         }
         droneRepository.saveAll(drones);
     }
@@ -159,7 +160,7 @@ public class DroneServiceImpl implements DroneService, DroneInternalService {
                 simulateDroneActivity(drone, DroneState.IDLE);
             else
                 simulateDroneActivity(drone, DroneState.LOADING);
-            history.updateHistory(drone, "Landing");
+            history.updateHistory(drone, Message.LANDING);
         }
         droneRepository.saveAll(drones);
     }
@@ -195,7 +196,16 @@ public class DroneServiceImpl implements DroneService, DroneInternalService {
      * @return The Drone needed if exists otherwise null
      */
     public Drone getDroneBySerialNumber(String serialNumber) {
-        return droneRepository.findBySerialNumber(serialNumber);
+        return droneRepository.findById(serialNumber).orElseThrow(() -> new DroneNotFoundException(Message.DRONE_DOESNT_EXIST + " " + serialNumber));
+    }
+
+    @Override
+    public Drone getDroneBySerialNumberAndState(String serialNumber, DroneState state) {
+        Drone drone = droneRepository.findBySerialNumberAndState(serialNumber, state);
+        if(drone == null) {
+            throw new DroneNotFoundException(Message.DRONE_DOESNT_EXIST + "in " + state + "state");
+        } else
+            return drone;
     }
 
     /**
@@ -204,7 +214,7 @@ public class DroneServiceImpl implements DroneService, DroneInternalService {
      * @param drone The Drone to be updated
      */
     public void updateDrone(Drone drone) {
-        droneRepository.save(drone);
+         droneRepository.save(drone);
     }
 
     /**
@@ -227,15 +237,5 @@ public class DroneServiceImpl implements DroneService, DroneInternalService {
     public boolean isDroneHaveSpace(Drone drone, double totalMedicationsWeights) {
         double availableWeight = drone.getWeightLimit() - drone.getWeightLoaded();
         return !(availableWeight < totalMedicationsWeights);
-    }
-
-    /**
-     * checks if drone exists and in loading state
-     *
-     * @param drone The drone which its state being checked
-     * @return true if it's not null and its state is loading, otherwise return false
-     */
-    public boolean isDroneSuitable(Drone drone) {
-        return drone != null && drone.getState() == DroneState.LOADING;
     }
 }
