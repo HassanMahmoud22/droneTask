@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 @Service
 public class MedicationServiceImpl implements MedicationService {
-    @Autowired
     private MedicationRepository medicationRepository;
     private MedicationMapper medicationMapper;
     @Autowired
