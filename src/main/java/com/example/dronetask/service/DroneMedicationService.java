@@ -1,9 +1,6 @@
 package com.example.dronetask.service;
 import com.example.dronetask.dto.LoadDroneDTO;
-import com.example.dronetask.dto.MedicationDTO;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public interface DroneMedicationService {

@@ -37,6 +37,8 @@ public class DroneMedicationServiceImpl implements DroneMedicationService {
     public void loadDrone(LoadDroneDTO loadDroneDTO) {
         //retreiving drone from Database with given serial number and in loading state
         Drone drone = droneInternalService.getDroneBySerialNumberAndState(loadDroneDTO.getSerialNumber(), DroneState.LOADING);
+        //if any of these medications exist in database, throw exception
+        medicationInternalService.throwExceptionIfMedicationExist(loadDroneDTO.getMedications());
         List<Medication> medications = medicationInternalService.mapMedicationDTOsToMedications(loadDroneDTO.getMedications());
         double totalMedicationsWeight = medicationInternalService.calculateTotalWeightOfMedications(medications);
         //if Drone doesn't have enough space to load medications

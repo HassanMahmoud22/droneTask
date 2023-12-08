@@ -10,12 +10,13 @@ import java.util.List;
 
 @Data
 public class LoadDroneDTO {
+
     @NotNull(message = "Drone serial number mustn't be null")
     @Size(min = Constraints.MIN_SERIAL, max = Constraints.MAX_SERIAL, message = "Drone serial number must be in range " + Constraints.MIN_SERIAL + "and " + Constraints.MAX_SERIAL + " characters")
     @JsonProperty(required = true)
     @NotEmpty(message = "Drone serial number mustn't be empty")
     @NotBlank(message = "Drone serial number mustn't be blank")
-    @Pattern (regexp = "^[^\\s@]+$", message = "allowed only letters and numbers")
+    @Pattern (regexp = "^[^\\s@]+$", message = "allowed only letters and numbers for serial number")
     private String serialNumber;
 
     @JsonProperty(required = true)

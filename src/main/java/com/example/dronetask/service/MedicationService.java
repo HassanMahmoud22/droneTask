@@ -16,8 +16,6 @@ public interface MedicationService {
      */
     public List<Medication> registerMedications(List<Medication> medications);
 
-
-
     /**
      * lists MedicationsDTOs by mapping Medications
      *
@@ -25,7 +23,4 @@ public interface MedicationService {
      * @return List of MedicationsDTO
      */
     public List<MedicationDTO> listMedications(Drone drone);
-
-
-
 }

@@ -57,7 +57,7 @@ public class DroneInternalServiceTest {
         try {
             Drone drone = droneInternalService.getDroneBySerialNumberAndState(null, droneState);
         } catch (Exception e) {
-            assertEquals(Message.DRONE_DOESNT_EXIST + "in " + droneState + " state", e.getMessage());
+            assertEquals(Message.DRONE_DOESNT_EXIST + " in " + droneState + " state", e.getMessage());
         }
     }
 
@@ -67,7 +67,7 @@ public class DroneInternalServiceTest {
         try {
             Drone drone = droneInternalService.getDroneBySerialNumberAndState("", droneState);
         } catch (Exception e) {
-            assertEquals(Message.DRONE_DOESNT_EXIST + "in " + droneState + " state", e.getMessage());
+            assertEquals(Message.DRONE_DOESNT_EXIST + " in " + droneState + " state", e.getMessage());
         }
     }
 

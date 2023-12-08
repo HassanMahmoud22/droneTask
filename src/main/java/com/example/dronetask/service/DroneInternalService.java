@@ -4,6 +4,7 @@ import com.example.dronetask.model.Drone;
 import com.example.dronetask.model.DroneState;
 
 public interface DroneInternalService {
+
     /**
      * Gets Drone by given serial number
      *

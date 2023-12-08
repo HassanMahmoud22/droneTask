@@ -15,6 +15,7 @@ public class DroneMedicationController {
     private DroneMedicationService droneMedicationService;
     @PostMapping(value="/load")
     public ResponseEntity<?> loadDrone(@Valid @RequestBody LoadDroneDTO loadDroneDTO){
+        droneMedicationService.loadDrone(loadDroneDTO);
         return ResponseEntity.status(HttpStatus.OK).body(loadDroneDTO);
     }
 

@@ -23,4 +23,11 @@ public interface MedicationInternalService {
      * @return the total weight of the Medications list
      */
     public double calculateTotalWeightOfMedications(List<Medication> medications);
+
+    /**
+     * Throws Exception if drone is null
+     *
+     * @param medicationDTOList     The medications dto list to be checked on
+     */
+    public void throwExceptionIfMedicationExist(List<MedicationDTO> medicationDTOList);
 }

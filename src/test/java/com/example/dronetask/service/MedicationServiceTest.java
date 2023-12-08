@@ -22,8 +22,8 @@ public class MedicationServiceTest {
     MedicationServiceTest() {
         medications = new ArrayList<>();
         drone = new Drone("12345", DroneModel.Lightweight, 500.0, 100, DroneState.LOADING, 0.0);
-        Medication medication = new Medication("modad 7ywy", 20.0, "12ksd1", "afsadgeg", drone);
-        Medication medication2 = new Medication("dwa bard", 50.0, "code2", "imageeee", drone);
+        Medication medication = new Medication("c retard", 20.0, "12ksd1", "afsadgeg", drone);
+        Medication medication2 = new Medication("natrelex", 50.0, "code2", "imageeee", drone);
         medications.add(medication);
         medications.add(medication2);
     }

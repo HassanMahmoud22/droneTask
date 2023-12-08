@@ -13,6 +13,7 @@ import com.example.dronetask.model.DroneState;
 import com.example.dronetask.repository.DroneRepository;
 import com.example.dronetask.service.DroneInternalService;
 import com.example.dronetask.service.DroneService;
+import com.example.dronetask.simulation.Simulation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -42,54 +43,14 @@ public class DroneServiceImpl implements DroneService, DroneInternalService {
      */
     @Override
     public DroneResponseDTO registerDrone(DroneRequestDTO droneRequestDTO) {
-        if(droneRequestDTO == null || droneRequestDTO.getSerialNumber() == null) {
-            throw new EmptyDataException(Message.EMPTY_DATA);
-        }
-        else {
-            Drone drone = droneMapper.dronerequestDtoToDrone(droneRequestDTO);
-            drone.setDroneModel(classifyDroneModel(drone.getWeightLimit()));
-            drone.setState(classifyDroneState(drone.getBatteryCapacity()));
-            drone.setWeightLoaded(0.0);
-            //save this drone to database and return droneResponseDTO
-            Drone repositoryDrone = droneRepository.save(drone);
-            return droneMapper.droneToDroneResponseDto(repositoryDrone);
-        }
-    }
-
-    /**
-     * Classifies Drone Model depending on weight limit of the Drone
-     *
-     * @param weightLimit the maximum weight drone can load to classify drone model depending on it
-     * @return The DroneModel after being classified
-     */
-    private DroneModel classifyDroneModel(double weightLimit) {
-        // check if weightLimit is smaller than or equal specified maximum weight that lightweight Drones can hold
-        if (weightLimit <= Constraints.LIGHT_WEIGHT_MAX) {
-            return DroneModel.Lightweight;
-            // check if weightLimit is smaller than or equal specified middle weight that middleweight Drones can hold
-        } else if (weightLimit <= Constraints.MIDDLE_WEIGHT_MAX) {
-            return DroneModel.Middleweight;
-            // check if weightLimit is smaller than or equal specified cruiser weight that cruiserweight Drones can hold
-        } else if (weightLimit <= Constraints.CRUISER_WEIGHT_MAX) {
-            return DroneModel.Cruiserweight;
-        } else {
-            return DroneModel.Heavyweight;
-        }
-    }
-
-    /**
-     * Classifies the Drone state depending on Battery Capacity
-     *
-     * @param batteryCapacity the battery capacity of drone to classify drone state based on it
-     * @return the state of the drone after classification
-     */
-    private DroneState classifyDroneState(int batteryCapacity) {
-        //if battery capacity > specified battery limit (25%)
-        if (batteryCapacity > Constraints.BATTERY_LIMIT) {
-            return DroneState.LOADING;
-        } else {
-            return DroneState.IDLE;
-        }
+        validateDroneRequestDTO(droneRequestDTO);
+        Drone drone = droneMapper.dronerequestDtoToDrone(droneRequestDTO);
+        drone.setDroneModel(DroneModel.classifyDroneModel(drone.getWeightLimit()));
+        drone.setState(DroneState.classifyDroneState(drone.getBatteryCapacity()));
+        drone.setWeightLoaded(0.0);
+        //save this drone to database and return droneResponseDTO
+        Drone repositoryDrone = droneRepository.save(drone);
+        return droneMapper.droneToDroneResponseDto(repositoryDrone);
     }
 
     /**
@@ -123,7 +84,7 @@ public class DroneServiceImpl implements DroneService, DroneInternalService {
     private void deliverMedication() {
         List<Drone> drones = droneRepository.findByState(DroneState.LOADED);
         for (Drone drone : drones) {
-            simulateDroneActivity(drone, DroneState.DELIVERING);
+            Simulation.simulateDroneActivity(drone, DroneState.DELIVERING);
             history.updateHistory(drone, Message.DELIVERING);
         }
         droneRepository.saveAll(drones);
@@ -136,7 +97,7 @@ public class DroneServiceImpl implements DroneService, DroneInternalService {
     private void unloadDrone() {
         List<Drone> drones = droneRepository.findByState(DroneState.DELIVERING);
         for (Drone drone : drones) {
-            simulateDroneActivity(drone, DroneState.DELIVERED);
+            Simulation.simulateDroneActivity(drone, DroneState.DELIVERED);
             drone.setWeightLoaded(0.0);
             history.updateHistory(drone, Message.UNLOADING);
         }
@@ -150,7 +111,7 @@ public class DroneServiceImpl implements DroneService, DroneInternalService {
     private void returnDrone() {
         List<Drone> drones = droneRepository.findByState(DroneState.DELIVERED);
         for (Drone drone : drones) {
-            simulateDroneActivity(drone, DroneState.RETURNING);
+            Simulation.simulateDroneActivity(drone, DroneState.RETURNING);
             history.updateHistory(drone, Message.RETURNING);
         }
         droneRepository.saveAll(drones);
@@ -164,36 +125,12 @@ public class DroneServiceImpl implements DroneService, DroneInternalService {
         List<Drone> drones = droneRepository.findByState(DroneState.RETURNING);
         for (Drone drone : drones) {
             if (drone.getBatteryCapacity() <= Constraints.BATTERY_LIMIT)
-                simulateDroneActivity(drone, DroneState.IDLE);
+                Simulation.simulateDroneActivity(drone, DroneState.IDLE);
             else
-                simulateDroneActivity(drone, DroneState.LOADING);
+                Simulation.simulateDroneActivity(drone, DroneState.LOADING);
             history.updateHistory(drone, Message.LANDING);
         }
         droneRepository.saveAll(drones);
-    }
-
-    /**
-     * Simulates Drone Activity by decreasing current Battery Capacity
-     * and sets its state to next state
-     *
-     * @param drone      The drone which its activities will be simulated
-     * @param droneState The next state of the drone after simulation
-     */
-    private void simulateDroneActivity(Drone drone, DroneState droneState) {
-        drone.setState(droneState);
-        drone.setBatteryCapacity(drone.getBatteryCapacity() - generateRandom());
-    }
-
-    /**
-     * This is a helping function for simulation
-     * which generate random number to be decreased in battery capacity
-     *
-     * @return random number from 1 to 5
-     */
-    private int generateRandom() {
-        int min = 1;
-        int max = 5;
-        return (int) Math.floor(Math.random() * (max - min + 1) + min);
     }
 
     /**
@@ -215,7 +152,7 @@ public class DroneServiceImpl implements DroneService, DroneInternalService {
     @Override
     public Drone getDroneBySerialNumberAndState(String serialNumber, DroneState state) {
         Drone drone = droneRepository.findBySerialNumberAndState(serialNumber, state);
-        throwExceptionIfDroneNotExist(drone, "in " + state + " state");
+        throwExceptionIfDroneNotExist(drone, " in " + state + " state");
         return drone;
     }
 
@@ -258,8 +195,40 @@ public class DroneServiceImpl implements DroneService, DroneInternalService {
      * @param drone     The drone to be checked on
      * @param message   The printed message in exception
      */
-    public void throwExceptionIfDroneNotExist(Drone drone, String message) {
+    private void throwExceptionIfDroneNotExist(Drone drone, String message) {
         if(drone == null)
             throw new DroneNotFoundException(Message.DRONE_DOESNT_EXIST + message);
+    }
+
+    /**
+     * Throws Exception if given serial number exists
+     *
+     * @param serialNumber     The Serial Number to be checked on
+     */
+    private void throwExceptionIfDroneSerialExist(String serialNumber) {
+        if(droneRepository.existsById(serialNumber)) {
+            throw new DroneNotFoundException(Message.DRONE_EXISTS);
+        }
+    }
+
+    /**
+     * Throws Exception if given DroneRequestDTO object is null or doesn't include serial number
+     *
+     * @param droneRequestDTO   The DroneRequestDTO object to check
+     */
+    private void throwExceptionIfDroneRequestDTOIsNull(DroneRequestDTO droneRequestDTO) {
+        if(droneRequestDTO == null || droneRequestDTO.getSerialNumber() == null) {
+            throw new EmptyDataException(Message.EMPTY_DATA);
+        }
+    }
+
+    /**
+     * Throws Exception if given DroneRequestDTO object is null or doesn't include serial number
+     *
+     * @param droneRequestDTO   The DroneRequestDTO object to check
+     */
+    private void validateDroneRequestDTO(DroneRequestDTO droneRequestDTO) {
+        throwExceptionIfDroneRequestDTOIsNull(droneRequestDTO);
+        throwExceptionIfDroneSerialExist(droneRequestDTO.getSerialNumber());
     }
 }

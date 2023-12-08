@@ -17,13 +17,14 @@ public class Drone {
 
     @Id
     @Column(name="serial_number", length = 100)
-    @NotNull(message = "serial number must not be empty")
-    @Size(min=5,max=100,message="Drone serial number must be between 5 and 100 characters")
+    @NotNull(message = "Drone serial number mustn't be null")
+    @Size(min = Constraints.MIN_SERIAL, max = Constraints.MAX_SERIAL, message = "Drone serial number must be in range " + Constraints.MIN_SERIAL + "and " + Constraints.MAX_SERIAL + " characters")
     @JsonProperty(required = true)
-    @NotEmpty
-    @NotBlank
+    @NotEmpty(message = "Drone serial number mustn't be empty")
+    @NotBlank(message = "Drone serial number mustn't be blank")
+    @Pattern(regexp = "^[a-zA-Z0-9]+$", message = "allowed only letters and numbers")
     private String serialNumber;
-    //not one of the values accepted for Enum class: [Middleweight, Lightweight, Heavyweight, Cruiserweight]]
+
     @Column(name="model")
     @Enumerated(value = EnumType.STRING)
     @JsonProperty(required = true)
@@ -31,16 +32,15 @@ public class Drone {
     private DroneModel droneModel;
 
     @Column(name="weight_limit")
-    @Max(value = Constraints.HEAVY_WEIGHT_MAX, message =" Drone cannot carry more than " + Constraints.HEAVY_WEIGHT_MAX + "gr")
-    @Min(value = 1, message =" Drone must carry at least 1 gr")
+    @DecimalMax(value = "500", message ="Drone cannot carry more than " + Constraints.WEIGHT_LIMIT_MAX + " gr")
+    @DecimalMin(value = "1", message ="Drone must carry atleast " + Constraints.WEIGHT_LIMIT_MIN + " gr")
     @NotNull
     private Double weightLimit;
 
     @Column(name="battery_capacity")
-    @JsonProperty(required = true)
-    @NotNull(message="Battery life must not be empty or null")
-    @Max(value=100,message="Battery Capacity cannot be more than 100%")
-    @Min(value=10,message="Battery Capacity cannot be less than 10%")
+    @NotNull(message = "Battery life must not be empty or null")
+    @Max(value = Constraints.BATTERY_CAPACITY_MAX, message = "Battery Capacity cannot be more than " + Constraints.BATTERY_CAPACITY_MAX + "%")
+    @Min(value = Constraints.BATTERY_CAPACITY_MIN, message = "Battery Capacity cannot be less than " + Constraints.BATTERY_CAPACITY_MIN + "%")
     private int batteryCapacity;
 
     @Column(name = "state")
@@ -53,7 +53,7 @@ public class Drone {
 
     @JsonIgnore
     @JsonManagedReference
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "droneId", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "droneId", cascade = CascadeType.ALL)
     private List<Medication> medications;
 
     public Drone() {
@@ -68,6 +68,7 @@ public class Drone {
         this.weightLoaded = weightLoaded;
         this.medications = medications;
     }
+
     public Drone(String serialNumber, DroneModel droneModel, Double weightLimit, int batteryCapacity, DroneState state, Double weightLoaded) {
         this.serialNumber = serialNumber;
         this.droneModel = droneModel;

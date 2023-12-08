@@ -23,10 +23,8 @@ public class DroneServiceTest {
     public void testRegisterDrone() {
         DroneRequestDTO droneRequestDTO = new DroneRequestDTO("12345", 500.0, 100);
         DroneResponseDTO expectedDroneResponseDTO = new DroneResponseDTO("12345", DroneModel.Heavyweight, 500.0, 100, DroneState.LOADING, 0.0);
-
         DroneResponseDTO droneResponseDTO = droneService.registerDrone(droneRequestDTO);
         assertEquals(expectedDroneResponseDTO, droneResponseDTO);
-
     }
 
     @Test

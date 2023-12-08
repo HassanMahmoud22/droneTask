@@ -2,6 +2,7 @@ package com.example.dronetask.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.example.dronetask.constant.Constraints;
+import jakarta.persistence.Id;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 @Data
@@ -21,6 +22,7 @@ public class MedicationDTO {
     @NotNull
     private Double weight;
 
+    @Id
     @JsonProperty(required = true)
     @NotEmpty(message = "Medication code can't be empty")
     @NotBlank(message = "Medication code can't be blank")

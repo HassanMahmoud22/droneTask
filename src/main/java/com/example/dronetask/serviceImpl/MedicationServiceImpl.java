@@ -3,6 +3,7 @@ package com.example.dronetask.serviceImpl;
 import com.example.dronetask.constant.Message;
 import com.example.dronetask.dto.MedicationDTO;
 import com.example.dronetask.exceptionHandler.DroneNotFoundException;
+import com.example.dronetask.exceptionHandler.MedicationExistsException;
 import com.example.dronetask.mapper.MedicationMapper;
 import com.example.dronetask.model.Drone;
 import com.example.dronetask.model.Medication;
@@ -15,6 +16,7 @@ import java.util.List;
 
 @Service
 public class MedicationServiceImpl implements MedicationService, MedicationInternalService {
+
     private final MedicationRepository medicationRepository;
     private final MedicationMapper medicationMapper;
 
@@ -77,5 +79,18 @@ public class MedicationServiceImpl implements MedicationService, MedicationInter
             }
         }
         return totalWeights;
+    }
+
+    /**
+     * Throws Exception if drone is null
+     *
+     * @param medicationDTOList     The medications dto list to be checked on
+     */
+    public void throwExceptionIfMedicationExist(List<MedicationDTO> medicationDTOList) {
+        for(MedicationDTO medicationDTO : medicationDTOList) {
+            if(medicationRepository.existsById(medicationDTO.getCode())) {
+                throw new MedicationExistsException("Medication code already exists " + medicationDTO.getCode());
+            }
+        }
     }
 }
