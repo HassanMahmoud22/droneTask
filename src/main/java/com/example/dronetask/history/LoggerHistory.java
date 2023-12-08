@@ -1,7 +1,7 @@
 package com.example.dronetask.history;
 
-import com.example.dronetask.models.Drone;
-import com.example.dronetask.servicesImpl.DroneServiceImpl;
+import com.example.dronetask.model.Drone;
+import com.example.dronetask.serviceImpl.DroneServiceImpl;
 import org.springframework.stereotype.Component;
 import java.util.logging.Logger;
 @Component
