@@ -32,7 +32,7 @@ class DroneMedicationControllerTest {
         LoadDroneDTO loadDroneDTO = new LoadDroneDTO("1111111", medicationDTOList);
         String postValue = OBJECT_MAPPER.writeValueAsString(loadDroneDTO);
         mockMvc.perform(MockMvcRequestBuilders
-                        .post("/api/v1/drones/DroneMedication/load")
+                        .post("/api/v1/DroneMedication/load")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(postValue))
                 .andExpect(status().isOk());
@@ -46,7 +46,7 @@ class DroneMedicationControllerTest {
         LoadDroneDTO loadDroneDTO = new LoadDroneDTO("1111111", medicationDTOList);
         String postValue = OBJECT_MAPPER.writeValueAsString(loadDroneDTO);
         mockMvc.perform(MockMvcRequestBuilders
-                        .post("/api/v1/drones/DroneMedication/load")
+                        .post("/api/v1/DroneMedication/load")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(postValue))
                 .andExpect(status().isBadRequest());
@@ -55,14 +55,14 @@ class DroneMedicationControllerTest {
     @Test
     void testGetMedications() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
-                        .get("/api/v1/drones/DroneMedication/getMedications/{serialNumber}", "1111111"))
+                        .get("/api/v1/DroneMedication/getMedications/{serialNumber}", "1111111"))
                 .andExpect(status().isOk());
     }
 
     @Test
     void testGetMedicationsByInvalidSerial() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
-                        .get("/api/v1/drones/DroneMedication/getMedications/{serialNumber}", "    "))
+                        .get("/api/v1/DroneMedication/getMedications/{serialNumber}", "    "))
                 .andExpect(status().isNotFound());
     }
 }

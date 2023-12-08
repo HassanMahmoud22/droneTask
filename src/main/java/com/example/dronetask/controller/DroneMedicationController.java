@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(path = {"/api/v1/drones/DroneMedication"})
+@RequestMapping(path = {"/api/v1/DroneMedication"})
 public class DroneMedicationController {
     @Autowired
     private DroneMedicationService droneMedicationService;
