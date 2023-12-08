@@ -8,14 +8,13 @@ import com.example.dronetask.mapper.MedicationMapper;
 import com.example.dronetask.model.Drone;
 import com.example.dronetask.model.Medication;
 import com.example.dronetask.repository.MedicationRepository;
-import com.example.dronetask.service.MedicationInternalService;
 import com.example.dronetask.service.MedicationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class MedicationServiceImpl implements MedicationService, MedicationInternalService {
+public class MedicationServiceImpl implements MedicationService {
 
     private final MedicationRepository medicationRepository;
     private final MedicationMapper medicationMapper;

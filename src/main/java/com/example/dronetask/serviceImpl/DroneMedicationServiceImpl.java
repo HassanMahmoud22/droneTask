@@ -16,14 +16,12 @@ import java.util.List;
 @Service
 public class DroneMedicationServiceImpl implements DroneMedicationService {
 
-    private final MedicationInternalService medicationInternalService;
     private final MedicationService medicationService;
     private final DroneInternalService droneInternalService;
 
     @Autowired
-    public DroneMedicationServiceImpl(DroneInternalService droneInternalService, MedicationInternalService medicationInternalService, MedicationService medicationService) {
+    public DroneMedicationServiceImpl(DroneInternalService droneInternalService, MedicationService medicationService) {
         this.droneInternalService = droneInternalService;
-        this.medicationInternalService = medicationInternalService;
         this.medicationService = medicationService;
     }
 
@@ -38,9 +36,9 @@ public class DroneMedicationServiceImpl implements DroneMedicationService {
         //retreiving drone from Database with given serial number and in loading state
         Drone drone = droneInternalService.getDroneBySerialNumberAndState(loadDroneDTO.getSerialNumber(), DroneState.LOADING);
         //if any of these medications exist in database, throw exception
-        medicationInternalService.throwExceptionIfMedicationExist(loadDroneDTO.getMedications());
-        List<Medication> medications = medicationInternalService.mapMedicationDTOsToMedications(loadDroneDTO.getMedications());
-        double totalMedicationsWeight = medicationInternalService.calculateTotalWeightOfMedications(medications);
+        medicationService.throwExceptionIfMedicationExist(loadDroneDTO.getMedications());
+        List<Medication> medications = medicationService.mapMedicationDTOsToMedications(loadDroneDTO.getMedications());
+        double totalMedicationsWeight = medicationService.calculateTotalWeightOfMedications(medications);
         //if Drone doesn't have enough space to load medications
         if (!droneInternalService.isDroneHasSpace(drone, totalMedicationsWeight)) {
             throw new WeightLimitExceeded(Message.WEIGHT_LIMIT_EXCEEDED);
