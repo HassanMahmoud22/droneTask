@@ -250,14 +250,14 @@ after installing The Dependencies required for the project, open DroneTaskApplic
 There are two types of testing I included in the project
 
 ### Integration Testing :
-#### The Path : \droneTask\src\test\java\com\example\dronetask\controller
+`` \droneTask\src\test\java\com\example\dronetask\controller ``
 
 This Package includes all integration test cases i assumed, to test them :
 - open any class in this package right click on it and click on run "class name".
 - If you want to test specific test case you can select the method you want to test and right click on it and click on run "method name".
 
 ### Unit Testing :
-#### The Path : \droneTask\src\test\java\com\example\dronetask\service
+`` \droneTask\src\test\java\com\example\dronetask\service ``
 
 This Package includes all unit test cases i assumed, to test them :
 - open any class in this package right click on it and click on run "class name".
