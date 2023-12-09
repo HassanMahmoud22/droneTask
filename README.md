@@ -237,6 +237,12 @@ it's an UML Diagram for the main classes
 
 ![uml](https://github.com/HassanMahmoud22/droneTask/assets/65622926/51725f87-b47c-41dc-95bf-4a71b7ed5915)
 
+## Sequence Diagram
+
+it's a Sequence Diagram for the main functions
+
+`` https://docs.google.com/document/d/1vMzYpUWlHyMb9_kTNBnK7kTLG9HcbdrdvNz2qGMzx-w/edit?usp=sharing ``
+
 ## How to Install
 
 - Download the project
