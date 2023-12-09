@@ -44,7 +44,8 @@ class DroneControllerTest {
 
     @Test
     void testRegisterDroneByInvalidData() throws Exception {
-        DroneRequestDTO droneRequestDTO = new DroneRequestDTO("asd234dsf342sdv435dsgdsg657asd234dsf342sdv435dsgdsg657asd234dsf342sdv435dsgdsg657asd234dsf342sdv435dsgdsg657",  600.0, 150);
+        String serialNumber = "asd234dsf342sdv435dsgdsg657asd234dsf342sdv435dsgdsg657asd234dsf342sdv435dsgdsg657asd234dsf342sdv435dsgdsg657";
+        DroneRequestDTO droneRequestDTO = new DroneRequestDTO(serialNumber,600.0, 150);
         String postValue = OBJECT_MAPPER.writeValueAsString(droneRequestDTO);
         mockMvc.perform(MockMvcRequestBuilders
                         .post("/api/v1/drones/registerDrone")

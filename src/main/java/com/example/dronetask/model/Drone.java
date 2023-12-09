@@ -53,7 +53,7 @@ public class Drone {
 
     @JsonIgnore
     @JsonManagedReference
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "droneId", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "droneId", cascade = CascadeType.ALL)
     private List<Medication> medications;
 
     public Drone() {

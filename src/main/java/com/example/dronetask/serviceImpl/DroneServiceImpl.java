@@ -73,7 +73,6 @@ public class DroneServiceImpl implements DroneService, DroneInternalService {
     @Override
     public DroneBatteryDTO getBatteryCapacity(String serialNumber) {
         Drone drone = getDroneBySerialNumber(serialNumber);
-        throwExceptionIfDroneNotExist(drone, "");
         return droneMapper.droneToBatteryDto(drone);
     }
 
