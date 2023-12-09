@@ -231,6 +231,11 @@ The API takes the serial number of the drone in url and returns all the Medicati
     ]
 }
 ```
+## UML Diagram 
+
+it's an UML Diagram for the main classes
+
+![uml](https://github.com/HassanMahmoud22/droneTask/assets/65622926/51725f87-b47c-41dc-95bf-4a71b7ed5915)
 
 ## How to Install
 
