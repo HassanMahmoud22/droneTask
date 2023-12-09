@@ -231,6 +231,17 @@ The API takes the serial number of the drone in url and returns all the Medicati
     ]
 }
 ```
+## UML Diagram 
+
+it's an UML Diagram for the main classes
+
+![uml](https://github.com/HassanMahmoud22/droneTask/assets/65622926/51725f87-b47c-41dc-95bf-4a71b7ed5915)
+
+## Sequence Diagram
+
+it's a Sequence Diagram for the main functions
+
+`` https://docs.google.com/document/d/1vMzYpUWlHyMb9_kTNBnK7kTLG9HcbdrdvNz2qGMzx-w/edit?usp=sharing ``
 
 ## How to Install
 
@@ -245,14 +256,14 @@ after installing The Dependencies required for the project, open DroneTaskApplic
 There are two types of testing I included in the project
 
 ### Integration Testing :
-#### The Path : \droneTask\src\test\java\com\example\dronetask\controller
+`` \droneTask\src\test\java\com\example\dronetask\controller ``
 
 This Package includes all integration test cases i assumed, to test them :
 - open any class in this package right click on it and click on run "class name".
 - If you want to test specific test case you can select the method you want to test and right click on it and click on run "method name".
 
 ### Unit Testing :
-#### The Path : \droneTask\src\test\java\com\example\dronetask\service
+`` \droneTask\src\test\java\com\example\dronetask\service ``
 
 This Package includes all unit test cases i assumed, to test them :
 - open any class in this package right click on it and click on run "class name".
