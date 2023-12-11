@@ -114,7 +114,7 @@ The API takes the serial number of the drone in url and returns its battery capa
 ### Get available drones to be loaded
 
 ```http
-GET /api/v1/drones/registerDrone
+GET /api/v1/drones/available
 ```
 
 The API returns all Drones in Loading state
@@ -203,7 +203,7 @@ The API takes the serial number of the Drone and a List of Medications to be loa
 ### Get Medications loaded on a specific Drone
 
 ```http
-  GET /api/v1/drones/batteryCapacity/{serialNumber}
+  GET /api/v1/DroneMedication/getMedications/{serialNumber}
 ```
 
 | Parameter | Type     | Description                       |
